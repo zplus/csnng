@@ -17,26 +17,19 @@ namespace Nanomsg2.Sharp
 {
     using static LayoutKind;
 
-    [StructLayout(Explicit, Pack = 1)]
+    [StructLayout(Sequential, Pack = 1)]
     internal struct POLLFD
     {
-        [FieldOffset(0)]
-        public ulong Fd;
+        public IntPtr Fd;
 
-        [FieldOffset(sizeof(ulong))]
         public short Events;
 
-        [FieldOffset(sizeof(ulong) + sizeof(short))]
         public short Revents;
-
+        
         internal POLLFD(int fd, short e, short re)
-            : this((ulong) fd, e, re)
         {
-        }
-
-        internal POLLFD(ulong fd, short e, short re)
-        {
-            Fd = fd;
+            // Not sure about this.  SOCKET should be IntPtr, but NNG_OPT_RECVFD is an int.
+            Fd = (IntPtr)fd;
             Events = e;
             Revents = re;
         }

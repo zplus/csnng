@@ -16,9 +16,9 @@ namespace Nanomsg2.Sharp
     internal static class Imports
     {
         /// <summary>
-        /// "nng.dll"
+        /// "nng.dll" but without ".dll" (see https://www.mono-project.com/docs/advanced/pinvoke/)
         /// </summary>
-        public const string NanomsgDll = "nng.dll";
+        public const string NanomsgDll = "nng";
 
         public const CallingConvention Cdecl = CallingConvention.Cdecl;
     }

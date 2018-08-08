@@ -72,23 +72,24 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
             });
         }
 
-        private delegate void LinkedSocketCallback(LatestPubSocket pub, LatestSubSocket sub);
+        private delegate void LinkedSocketCallback<SUB>(LatestPubSocket pub, SUB sub);
 
-        private void We_can_create_linked_sockets(LinkedSocketCallback callback)
+        private void We_can_create_linked_sockets<SUB>(LinkedSocketCallback<SUB> callback)
+            where SUB : Socket, new()
         {
             Assert.NotNull(callback);
 
             Given_fresh_slate("can create linked sockets", () =>
             {
                 LatestPubSocket pub = null;
-                LatestSubSocket sub = null;
+                SUB sub = null;
 
                 try
                 {
                     var addr = TestAddr;
 
                     pub = CreateOne<LatestPubSocket>();
-                    sub = CreateOne<LatestSubSocket>();
+                    sub = CreateOne<SUB>();
 
                     // Serves other paths of unit testing.
                     sub.Options.SetDuration(O.RecvTimeoutDuration, FromMilliseconds(90d));
@@ -107,11 +108,11 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
             });
         }
 
-        private void Subscriber_can_subscribe(LinkedSocketCallback callback)
+        private void Subscriber_can_subscribe(LinkedSocketCallback<LatestSubSocket> callback)
         {
             Assert.NotNull(callback);
 
-            We_can_create_linked_sockets((pub, sub) =>
+            We_can_create_linked_sockets<LatestSubSocket>((pub, sub) =>
             {
                 Section("Subscriber can subscribe", () =>
                 {
@@ -136,9 +137,9 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
             });
         }
 
-        private void Subscriber_can_receive_from_Publisher(LinkedSocketCallback callback)
+        private void Subscriber_can_receive_from_Publisher(LinkedSocketCallback<LatestSubSocket> callback)
         {
-            We_can_create_linked_sockets((pub, sub) =>
+            We_can_create_linked_sockets<LatestSubSocket>((pub, sub) =>
             {
                 Section("Subscriber can receive from publisher", () =>
                 {
@@ -214,7 +215,7 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
         [Fact]
         private void Subscribers_without_subscriptions_do_not_receive()
         {
-            We_can_create_linked_sockets((pub, sub) =>
+            We_can_create_linked_sockets<LatestSubSocket>((pub, sub) =>
             {
                 Section("Subscribers without subscriptions do not receive", () =>
                 {
@@ -232,13 +233,14 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
         [Fact]
         private void Subscribers_in_raw_receive()
         {
-            We_can_create_linked_sockets((pub, sub) =>
+            We_can_create_linked_sockets<V0.SubSocketRaw>((pub, sub) =>
             {
                 Section("Subscribers in raw receive", () =>
                 {
                     var m = CreateMessage();
 
-                    sub.Options.SetInt32(O.Raw, 1);
+                    // nng_setopt_int("raw") is read-only now
+                    //sub.Options.SetInt32(O.Raw, 1);
 
                     m.Body.Append(Topics.Some_like_it_raw);
                     pub.Send(m);

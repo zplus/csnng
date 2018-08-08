@@ -1,11 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Subor.csnng.NetStandard</PackageId>
+    <Authors>mwpowellhtx (minor changes and packaged by Subor)</Authors>
+    <Company>Subor Advanced Technology Co., Ltd.</Company>
+    <Product>Subor.csnng.NetStandard</Product>
+    <PackageTags>subor csnng nng z+ zplus</PackageTags>
+    <RepositoryUrl>https://github.com/zplus/csnng</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/zplus/csnng/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <Description>.NET binding for nng (https://github.com/nanomsg/nng)
+Subor fork of https://github.com/mwpowellhtx/csnng</Description>
+    <Version>0.6.4</Version>
+    <PackageProjectUrl>https://github.com/zplus/csnng</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -13,9 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\build\nng-prefix\src\nng-build\Debug\nng.dll" Link="nng.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="runtimes\**" PackagePath="runtimes" CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
 </Project>

@@ -27,6 +27,7 @@ namespace Nanomsg2.Sharp
 
         protected Invoker()
         {
+            Console.Out.WriteLine("Native library: " + LibraryLoader.NativeLibraryPath);
             DefaultInvoker = this;
         }
 

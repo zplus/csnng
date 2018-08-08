@@ -27,7 +27,7 @@ namespace Nanomsg2.Sharp.Protocols
     public class PollingTests : BehaviorDrivenTestFixtureBase
     {
         [DllImport(Ws232Dll, EntryPoint = "WSAPoll", CallingConvention = StdCall)]
-        private static extern int WsaPoll(ref POLLFD value, ulong fds, int timeout);
+        private static extern int WsaPoll([In,Out] POLLFD[] value, ulong fds, int timeout);
 
         private const int InvalidFd = -1;
 
@@ -110,9 +110,9 @@ namespace Nanomsg2.Sharp.Protocols
 
                 Section("they start non pollable", () =>
                 {
-                    var x = new POLLFD((ushort) fd, @in, 0);
-                    Assert.Equal(0, WsaPoll(ref x, 1, 0));
-                    Assert.Equal(0, x.Revents);
+                    var x = new[] { new POLLFD(fd, @in, 0) };
+                    Assert.Equal(0, WsaPoll(x, 1, 0));
+                    Assert.Equal(0, x[0].Revents);
                 });
             });
         }
@@ -129,15 +129,15 @@ namespace Nanomsg2.Sharp.Protocols
                 {
                     var s2 = _sockets[1];
 
-                    var x = new POLLFD((ushort) fd, In.ToShort(), 0);
+                    var x = new[] { new POLLFD(fd, In.ToShort(), 0) };
                     using (var m = CreateMessage())
                     {
                         m.Body.Append(Kick);
                         s2.Send(m);
-                        Assert.Equal(1, WsaPoll(ref x, 1, 1000));
+                        Assert.Equal(1, WsaPoll(x, 1, 1000));
                         // The C/C++ unit test are actually more specific than the original unit test suggests.
-                        Assert.NotEqual(0, x.Revents & @in);
-                        Assert.Equal(rdNorm, x.Revents & @in);
+                        Assert.NotEqual(0, x[0].Revents & @in);
+                        Assert.Equal(rdNorm, x[0].Revents & @in);
                     }
                 });
             });

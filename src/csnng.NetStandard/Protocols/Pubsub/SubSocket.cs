@@ -21,14 +21,18 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
 
     namespace V0
     {
-        public class SubSocket : Socket, ISubSocket
+        public abstract class SubSocketBase : Socket, ISubSocket
         {
             [DllImport(NanomsgDll, EntryPoint = "nng_sub0_open", CallingConvention = Cdecl)]
             [return: MarshalAs(I4)]
-            private static extern int __Open(ref uint sid);
+            protected static extern int __Open(ref uint sid);
 
-            public SubSocket()
-                : base(__Open)
+            [DllImport(NanomsgDll, EntryPoint = "nng_sub0_open_raw", CallingConvention = Cdecl)]
+            [return: MarshalAs(I4)]
+            protected static extern int __OpenRaw(ref uint sid);
+
+            protected SubSocketBase(OpenDelegate open)
+                : base(open)
             {
             }
 
@@ -60,6 +64,22 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
             public override void Send(string s, int length, SocketFlag flags = None)
             {
                 throw InvalidOperation(nameof(Send));
+            }
+        }
+
+        public class SubSocket : SubSocketBase
+        {
+            public SubSocket()
+                : base(__Open)
+            {
+            }
+        }
+
+        public class SubSocketRaw : SubSocketBase
+        {
+            public SubSocketRaw()
+                : base(__OpenRaw)
+            {
             }
         }
     }

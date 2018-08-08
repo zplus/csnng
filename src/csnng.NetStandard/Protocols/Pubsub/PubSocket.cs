@@ -27,8 +27,12 @@ namespace Nanomsg2.Sharp.Protocols.Pubsub
             [return: MarshalAs(I4)]
             private static extern int __Open(ref uint sid);
 
-            public PubSocket()
-                : base(__Open)
+            [DllImport(NanomsgDll, EntryPoint = "nng_pub0_open_raw", CallingConvention = Cdecl)]
+            [return: MarshalAs(I4)]
+            private static extern int __OpenRaw(ref uint sid);
+
+            public PubSocket(bool isRawMode = false)
+                : base(isRawMode ? new OpenDelegate(__OpenRaw) : new OpenDelegate(__Open))
             {
             }
 

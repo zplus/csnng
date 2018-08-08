@@ -21,8 +21,7 @@ namespace Nanomsg2.Sharp.Messaging
     public class HeaderPart : MessagePart, IHeaderPart
     {
         [DllImport(NanomsgDll, EntryPoint = "nng_msg_header_len", CallingConvention = Cdecl)]
-        [return: MarshalAs(I8)]
-        private static extern ulong __GetLength(IntPtr msgPtr);
+        private static extern UIntPtr __GetLength(IntPtr msgPtr);
 
         [DllImport(NanomsgDll, EntryPoint = "nng_msg_header", CallingConvention = Cdecl)]
         private static extern IntPtr __GetBytes(IntPtr msgPtr);
@@ -51,7 +50,7 @@ namespace Nanomsg2.Sharp.Messaging
         {
         }
 
-        public override ulong Size => Invoker.InvokeWithResult(__GetLength);
+        public override ulong Size => (ulong)Invoker.InvokeWithResult(__GetLength);
 
         public override void Clear()
         {

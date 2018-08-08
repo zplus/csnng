@@ -1,3 +1,27 @@
+# Subor Notes
+
+Pre-requisites from https://github.com/zplus/nng:
+- [Cmake](https://cmake.org/)
+- [Ninja](https://github.com/ninja-build/ninja/releases)
+- This repo cloned
+
+Run __Developer Command Prompt for VS 2017__ in this clone repo:
+```
+mkdir build
+cd build
+cmake -G "Visual Studio 15 2017" ..
+# For x64/release
+cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release ..
+```
+
+Then open `src/Nanomsg2.Sharp.sln` with Visual Studio 2017 and build normally.
+
+This will create `nng.dll` binaries that are referenced by csproj projects.  Other generators (like Ninja, the one recommended for nng) are possible, but the compiled binaries will be in a different location than the csproj files are looking.
+
+
+
+# Original README follows
+
 ## C#/.NET NNG (pre-nanomsg v2)
 
 Essentially, this repository is a continuation of my efforts to translate my [C++ NNG](http://github.com/mwpowellhtx/nngcpp/) wrapper of the same, but with couple of severe caveats. Choosing to proceed with NNG, never mind wrappers, is up to you. You have been warned.
